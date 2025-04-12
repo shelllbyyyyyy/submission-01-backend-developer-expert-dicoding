@@ -14,4 +14,7 @@ export const config = {
     host: process.env.HOST,
     port: process.env.PORT,
   },
+  database: {
+    connectionString: process.env.DATABASE_URL,
+  },
 };
