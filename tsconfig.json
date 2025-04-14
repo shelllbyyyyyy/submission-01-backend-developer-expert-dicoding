@@ -18,12 +18,14 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
+    "esModuleInterop": true,
     "paths": {
       "@common/*": ["./src/common/*"],
       "@application/*": ["./src/application/*"],
       "@domain/*": ["./src/domain/*"],
       "@infrastructure/*": ["./src/infrastructure/*"],
-      "@interface/*": ["./src/interface/*"]
+      "@interface/*": ["./src/interface/*"],
+      "@test/*": ["./test/*"]
     },
     "resolveJsonModule": true
   }

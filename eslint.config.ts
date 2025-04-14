@@ -22,7 +22,7 @@ export default tseslint.config(
       parserOptions: {
         project: ['tsconfig.json', 'tsconfig.spec.json'],
         projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: './tsconfig.json',
       },
     },
   },
@@ -51,6 +51,8 @@ export default tseslint.config(
       '@typescript-eslint/unbound-method': 'off',
       '@typescript-eslint/only-throw-error': 'off',
       '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/no-empty-object-type': 'off',
     },
   },
 );
