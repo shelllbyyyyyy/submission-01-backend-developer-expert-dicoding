@@ -1,7 +1,16 @@
+/* istanbul ignore file */
+
+import MainModule from '@infrastructure/MainModule';
 import { createServer } from '@infrastructure/http/createServer';
 
-(async () => {
-  const server = await createServer();
+export async function bootstrap() {
+  const server = await createServer(MainModule);
+
   await server.start();
-  console.log(`server start at ${server.info.uri}`);
-})();
+
+  console.log(`Server started on ${server.info.uri}`);
+
+  return server;
+}
+
+bootstrap();
