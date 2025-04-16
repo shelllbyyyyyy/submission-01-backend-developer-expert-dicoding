@@ -4,6 +4,7 @@ import { IRegisteredUser, IRegisterUser } from '@common/interface/IUser';
 import { RegisteredUser } from '@domain/users/entities/RegisteredUser';
 import { RegisterUser } from '@domain/users/entities/RegisterUser';
 import { UserRepository } from '../UserRepository';
+import { NotFoundError } from '@common/exceptions/NotFoundError';
 
 describe('User Repository', () => {
   it('should contain abstract method', () => {
@@ -31,11 +32,15 @@ describe('User Repository', () => {
         throw new InvariantError(MESSAGE.REGISTER_PAYLOAD_USERNAME_UNAVAILABLE);
       }
 
-      async getIdByUsername(username: string): Promise<string> {
+      async getIdByUsername(_: string): Promise<string> {
         return mockUser.id;
       }
 
-      async getPasswordByUsername(username: string): Promise<string> {
+      async verifyAvailableUserById(_: string): Promise<void> {
+        throw new NotFoundError(MESSAGE.USER_NOT_FOUND);
+      }
+
+      async getPasswordByUsername(_: string): Promise<string> {
         return mockPayload.password;
       }
     }
@@ -44,6 +49,7 @@ describe('User Repository', () => {
 
     expect(userRepository.addUser(mockRegisterUser)).resolves.toEqual(mockRegisteredUser);
     expect(userRepository.verifyAvailableUsername(mockPayload.username)).rejects.toThrow(InvariantError);
+    expect(userRepository.verifyAvailableUserById(mockUser.id)).rejects.toThrow(NotFoundError);
     expect(userRepository.getPasswordByUsername(mockPayload.username)).resolves.toEqual(mockPayload.password);
     expect(userRepository.getIdByUsername(mockPayload.username)).resolves.toEqual(mockUser.id);
   });

@@ -7,6 +7,7 @@ import { IRegisteredUser } from '@common/interface/IUser';
 import { RegisteredUser } from '@domain/users/entities/RegisteredUser';
 import { RegisterUser } from '@domain/users/entities/RegisterUser';
 import { UserRepository } from '@domain/users/repositories/UserRepository';
+import { NotFoundError } from '@common/exceptions/NotFoundError';
 
 export class UserRepositoryPG extends UserRepository {
   constructor(
@@ -39,6 +40,19 @@ export class UserRepositoryPG extends UserRepository {
 
     if (result.rowCount) {
       throw new InvariantError(MESSAGE.REGISTER_PAYLOAD_USERNAME_UNAVAILABLE);
+    }
+  }
+
+  async verifyAvailableUserById(id: string): Promise<void> {
+    const query = {
+      text: 'SELECT id, username, fullname FROM users WHERE id = $1',
+      values: [id],
+    };
+
+    const result = await this.database.query(query);
+
+    if (!result.rowCount) {
+      throw new NotFoundError(MESSAGE.USER_NOT_FOUND);
     }
   }
 

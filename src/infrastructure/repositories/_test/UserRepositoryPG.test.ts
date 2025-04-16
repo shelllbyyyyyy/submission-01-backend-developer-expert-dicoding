@@ -4,6 +4,7 @@ import { InvariantError } from '@common/exceptions/InvariantError';
 import { RegisterUser } from '@domain/users/entities/RegisterUser';
 import { RegisteredUser } from '@domain/users/entities/RegisteredUser';
 import { pool } from '@infrastructure/database/PG/pool';
+import { NotFoundError } from '@common/exceptions/NotFoundError';
 
 import { UsersTableTestHelper } from '@test/UserTableHelper';
 
@@ -20,7 +21,7 @@ describe('UserRepositoryPostgres', () => {
 
   describe('verifyAvailableUsername function', () => {
     it('should throw InvariantError when username not available', async () => {
-      await UsersTableTestHelper.addUser({ username: 'dicoding' }); // memasukan user baru dengan username dicoding
+      await UsersTableTestHelper.addUser({ username: 'dicoding' });
       const userRepositoryPostgres = new UserRepositoryPG(pool, nanoid);
 
       await expect(userRepositoryPostgres.verifyAvailableUsername('dicoding')).rejects.toThrow(InvariantError);
@@ -97,6 +98,21 @@ describe('UserRepositoryPostgres', () => {
       const userRepositoryPostgres = new UserRepositoryPG(pool, nanoid);
 
       await expect(userRepositoryPostgres.getPasswordByUsername('dicoding')).resolves.not.toThrow(InvariantError);
+    });
+  });
+
+  describe('verifyAvailableUserById function', () => {
+    it('should throw InvariantError when user not available', async () => {
+      const userRepositoryPostgres = new UserRepositoryPG(pool, nanoid);
+
+      await expect(userRepositoryPostgres.verifyAvailableUserById('user-123')).rejects.toThrow(NotFoundError);
+    });
+
+    it('should not throw InvariantError when user available', async () => {
+      await UsersTableTestHelper.addUser({ username: 'dicoding' });
+      const userRepositoryPostgres = new UserRepositoryPG(pool, nanoid);
+
+      await expect(userRepositoryPostgres.verifyAvailableUserById('user-123')).resolves.not.toThrow(NotFoundError);
     });
   });
 });

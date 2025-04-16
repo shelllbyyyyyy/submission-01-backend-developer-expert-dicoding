@@ -2,6 +2,9 @@ import { PasswordHash } from '@application/securities/PasswordHash';
 import { RegisteredUser } from '@domain/users/entities/RegisteredUser';
 import { UserRepository } from '@domain/users/repositories/UserRepository';
 import { RegisterUser } from '@domain/users/entities/RegisterUser';
+import { InvariantError } from '@common/exceptions/InvariantError';
+import { MESSAGE } from '@common/constant';
+import { NotFoundError } from '@common/exceptions/NotFoundError';
 import { AddUserUseCase } from '../AddUserUseCase';
 
 describe('AddUserUseCase', () => {
@@ -20,27 +23,33 @@ describe('AddUserUseCase', () => {
 
     class UserRepositoryImpl extends UserRepository {
       async addUser(_: RegisterUser): Promise<RegisteredUser> {
-        return mockRegisteredUser;
+        throw new InvariantError(MESSAGE.LOGIN_PAYLOAD_USER_UNAVAILABLE);
       }
 
-      async verifyAvailableUsername(_: string): Promise<void> {}
+      async verifyAvailableUsername(_: string): Promise<void> {
+        throw new InvariantError(MESSAGE.REGISTER_PAYLOAD_USERNAME_UNAVAILABLE);
+      }
 
       async getIdByUsername(_: string): Promise<string> {
-        return mockRegisteredUser.getId;
+        throw new NotFoundError(MESSAGE.LOGIN_PAYLOAD_USER_UNAVAILABLE);
+      }
+
+      async verifyAvailableUserById(_: string): Promise<void> {
+        throw new NotFoundError(MESSAGE.USER_NOT_FOUND);
       }
 
       async getPasswordByUsername(_: string): Promise<string> {
-        return useCasePayload.password;
+        throw new NotFoundError(MESSAGE.LOGIN_PAYLOAD_USER_UNAVAILABLE);
       }
     }
 
     class BcryptPasswordHash extends PasswordHash {
       async hash(_: string): Promise<string> {
-        return 'hash_password';
+        throw new InvariantError(MESSAGE.METHOD_NOT_IMPLEMENTED);
       }
 
-      async comparePassword(password: string, dbPassword: string): Promise<boolean> {
-        return;
+      async comparePassword(_password: string, _dbPassword: string): Promise<boolean> {
+        throw new InvariantError(MESSAGE.METHOD_NOT_IMPLEMENTED);
       }
     }
 

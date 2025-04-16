@@ -1,6 +1,6 @@
 import { AuthenticationTokenManager } from '@application/securities/AuthenticationTokenManager';
 import { PasswordHash } from '@application/securities/PasswordHash';
-import { AUTHENTICATION_REPOSITORY, AUTHENTICATION_TOKEN_MANAGER } from '@common/constant';
+import { AUTHENTICATION_REPOSITORY, AUTHENTICATION_TOKEN_MANAGER, MESSAGE } from '@common/constant';
 import { ITokenPayload } from '@common/interface/IUser';
 import { NewAuth } from '@domain/authentications/entities/NewAuth';
 import { AuthenticationRepository } from '@domain/authentications/repositories/AuthenticationRepository';
@@ -8,6 +8,8 @@ import { RegisteredUser } from '@domain/users/entities/RegisteredUser';
 import { RegisterUser } from '@domain/users/entities/RegisterUser';
 import { UserRepository } from '@domain/users/repositories/UserRepository';
 import { LoginUserUseCase } from '../LoginUserUseCase';
+import { InvariantError } from '@common/exceptions/InvariantError';
+import { NotFoundError } from '@common/exceptions/NotFoundError';
 
 describe('GetAuthenticationUseCase', () => {
   it('should orchestrating the get authentication action correctly', async () => {
@@ -22,17 +24,23 @@ describe('GetAuthenticationUseCase', () => {
 
     class UserRepositoryImpl extends UserRepository {
       async addUser(_: RegisterUser): Promise<RegisteredUser> {
-        return;
+        throw new InvariantError(MESSAGE.LOGIN_PAYLOAD_USER_UNAVAILABLE);
       }
 
-      async verifyAvailableUsername(_: string): Promise<void> {}
+      async verifyAvailableUsername(_: string): Promise<void> {
+        throw new InvariantError(MESSAGE.REGISTER_PAYLOAD_USERNAME_UNAVAILABLE);
+      }
 
       async getIdByUsername(_: string): Promise<string> {
-        return;
+        throw new NotFoundError(MESSAGE.LOGIN_PAYLOAD_USER_UNAVAILABLE);
+      }
+
+      async verifyAvailableUserById(_: string): Promise<void> {
+        throw new NotFoundError(MESSAGE.USER_NOT_FOUND);
       }
 
       async getPasswordByUsername(_: string): Promise<string> {
-        return useCasePayload.password;
+        throw new NotFoundError(MESSAGE.LOGIN_PAYLOAD_USER_UNAVAILABLE);
       }
     }
 

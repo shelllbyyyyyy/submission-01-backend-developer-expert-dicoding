@@ -1,4 +1,5 @@
 import { AuthenticationTokenManager } from '@application/securities/AuthenticationTokenManager';
+import { REFRESH_AUTHENTICATION_USE_CASE } from '@common/constant';
 import { IUseCase } from '@common/interface/IUseCase';
 import { AuthenticationRepository } from '@domain/authentications/repositories/AuthenticationRepository';
 
@@ -24,11 +25,11 @@ export class RefreshAuthenticationUseCase implements IUseCase<string, { refreshT
     const { refreshToken } = payload;
 
     if (!refreshToken) {
-      throw new Error('REFRESH_AUTHENTICATION_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN');
+      throw new Error(REFRESH_AUTHENTICATION_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN);
     }
 
     if (typeof refreshToken !== 'string') {
-      throw new Error('REFRESH_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION');
+      throw new Error(REFRESH_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION);
     }
   }
 }

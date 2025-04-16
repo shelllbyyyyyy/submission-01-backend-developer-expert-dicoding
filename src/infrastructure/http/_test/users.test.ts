@@ -16,7 +16,6 @@ describe('When POST /users', () => {
 
   afterAll(async () => {
     await pool.end();
-
     await server.stop();
   });
 
