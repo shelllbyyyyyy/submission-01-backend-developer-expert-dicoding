@@ -1,7 +1,9 @@
-import { ReqRefDefaults, Request, ResponseObject, ResponseToolkit } from '@hapi/hapi';
 import { Container } from 'instances-container';
+import { ReqRefDefaults, Request, ResponseObject, ResponseToolkit } from '@hapi/hapi';
 
 import { AddUserUseCase } from '@application/use-case/AddUserUseCase';
+import { IResponse } from '@common/interface/IResponse';
+import { IRegisteredUser, IRegisterUser } from '@common/interface/IUser';
 
 export class UsersHandler {
   constructor(private readonly module: Container) {
@@ -9,15 +11,21 @@ export class UsersHandler {
   }
 
   async postUserHandler(request: Request<ReqRefDefaults>, h: ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject> {
-    const addUserUseCase = this.module.getInstance(AddUserUseCase.name);
-    const addedUser = await addUserUseCase.execute(request.payload);
+    const addUserUseCase = this.module.getInstance(AddUserUseCase.name) as AddUserUseCase;
+    const registeredUser = await addUserUseCase.execute(request.payload as IRegisterUser);
 
-    const response = h.response({
+    const responsePayload: IResponse<{ addedUser: IRegisteredUser }> = {
       status: 'success',
       data: {
-        addedUser,
+        addedUser: {
+          id: registeredUser.getId,
+          fullname: registeredUser.getFullname,
+          username: registeredUser.getUsername,
+        },
       },
-    });
+    };
+
+    const response = h.response(responsePayload);
 
     response.code(201);
 
