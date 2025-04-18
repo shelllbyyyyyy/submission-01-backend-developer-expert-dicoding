@@ -40,6 +40,16 @@ export class REFRESH_AUTHENTICATION_USE_CASE {
   public static PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION = 'REFRESH_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION';
 }
 
+export class NEW_THREAD {
+  public static NOT_CONTAIN_NEEDED_PROPERTY = 'NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY';
+  public static NOT_MEET_DATA_TYPE_SPECIFICATION = 'NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION';
+}
+
+export class NEW_COMMENT {
+  public static NOT_CONTAIN_NEEDED_PROPERTY = 'NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY';
+  public static NOT_MEET_DATA_TYPE_SPECIFICATION = 'NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION';
+}
+
 export class MESSAGE {
   public static SERVER_ERROR = 'terjadi kesalahan di server kami';
 
@@ -53,6 +63,7 @@ export class MESSAGE {
   public static USER_LOGIN_NOT_MEET_DATA_TYPE_SPECIFICATION = 'username dan password harus string';
   public static LOGIN_PAYLOAD_USER_UNAVAILABLE = 'user tidak ditemukan';
   public static WRONG_CREDENTIALS = 'kredential salah';
+  public static USER_NOT_FOUND = 'user tidak ditemukan';
 
   public static REFRESH_TOKEN_NOT_MEET_DATA_TYPE_SPECIFICATION = 'refresh token harus string';
   public static REFRESH_AUTHENTICATION_USE_CASE_NOT_CONTAIN_REFRESH_TOKEN = 'harus mengirimkan token refresh';
@@ -61,4 +72,19 @@ export class MESSAGE {
 
   public static DELETE_AUTHENTICATION_USE_CASE_NOT_CONTAIN_REFRESH_TOKEN = 'harus mengirimkan token refresh';
   public static DELETE_AUTHENTICATION_USE_CASE_NOT_MEET_DATA_TYPE_SPECIFICATION = 'refresh token harus string';
+
+  public static NEW_THREAD_NOT_CONTAIN_NEEDED_PROPERTY = 'harus mengirimkan title dan body';
+  public static NEW_THREAD_NOT_MEET_DATA_TYPE_SPESIFICATION = 'title dan body harus string';
+
+  public static THREAD_NOT_FOUND = 'thread tidak ditemukan di database';
+
+  public static NEW_COMMENT_NOT_CONTAIN_NEEDED_PROPERTY = 'harus mengirimkan content';
+  public static NEW_COMMENT_NOT_MEET_DATA_TYPE_SPESIFICATION = 'content harus string';
+
+  public static DELETE_COMMENT_RESTRICTED = 'hanya pemilik komen yang dapat menghapus';
+  public static DELETE_COMMENT_FAIL = 'gagal menghapus comment';
+
+  public static COMMENT_NOT_FOUND = 'comment tidak ditemukan di database';
+
+  public static METHOD_NOT_IMPLEMENTED = 'method tidak diimplementasikan';
 }
