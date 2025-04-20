@@ -3,7 +3,7 @@
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
-export function up(pgm) {
+exports.up = pgm => {
   pgm.sql(`
           CREATE TABLE IF NOT EXISTS public.threads (
               id VARCHAR(50) NOT NULL PRIMARY KEY,
@@ -13,14 +13,14 @@ export function up(pgm) {
               date TIMESTAMP WITH TIME ZONE NOT NULL,
               FOREIGN KEY(owner) REFERENCES public.users(id) ON DELETE CASCADE
           );`);
-}
+};
 
 /**
  * @param pgm {import('node-pg-migrate').MigrationBuilder}
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
-export function down(pgm) {
+exports.down = pgm => {
   pgm.sql(`
           DROP TABLE IF EXISTS public.threads;`);
-}
+};

@@ -3,7 +3,7 @@
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
-export function up(pgm) {
+exports.up = pgm => {
   pgm.sql(`
             CREATE TABLE IF NOT EXISTS public.comments (
                 id VARCHAR(50) NOT NULL PRIMARY KEY,
@@ -17,14 +17,14 @@ export function up(pgm) {
                 FOREIGN KEY(parent_id) REFERENCES public.comments(id) ON DELETE CASCADE,
                 FOREIGN KEY(thread_id) REFERENCES public.threads(id) ON DELETE CASCADE
             );`);
-}
+};
 
 /**
  * @param pgm {import('node-pg-migrate').MigrationBuilder}
  * @param run {() => void | undefined}
  * @returns {Promise<void> | void}
  */
-export function down(pgm) {
+exports.down = pgm => {
   pgm.sql(`
             DROP TABLE IF EXISTS public.comments;`);
-}
+};

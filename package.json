@@ -4,13 +4,14 @@
   "description": "Submission Dicoding x IDCamp Backend developer expert javasript",
   "main": "dist/main.js",
   "scripts": {
-    "start": "node dist/main.js",
+    "start": "npm run build && node dist/main.js",
     "build": "tsc -p tsconfig.build.json && tsc-alias -p tsconfig.build.json",
     "start:dev": "tsx --watch src/main.ts",
     "test": "jest --setupFiles dotenv/config -i",
     "test:watch:change": "jest --watch --setupFiles dotenv/config -i",
     "test:watch": "jest --watchAll --coverage --setupFiles dotenv/config -i",
     "migrate": "node-pg-migrate",
+    "migrate:test": "node-pg-migrate -f config/database/test.json",
     "lint": "eslint ./src",
     "lint:fix": "eslint ./src --fix",
     "prepare": "husky"
