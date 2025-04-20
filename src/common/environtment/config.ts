@@ -1,12 +1,4 @@
 import 'dotenv/config';
-import { config as cfg } from 'dotenv';
-import { resolve } from 'path';
-
-if (process.env.NODE_ENV === 'test') {
-  cfg({
-    path: resolve(process.cwd(), '.test.env'),
-  });
-}
 
 export const config = {
   app: {
@@ -15,6 +7,11 @@ export const config = {
   },
   database: {
     connectionString: process.env.DATABASE_URL,
+    host: process.env.NODE_ENV !== 'test' ? process.env.PGHOST : process.env.PGHOST_TEST,
+    port: process.env.NODE_ENV !== 'test' ? process.env.PGPORT : process.env.PGPORT_TEST,
+    user: process.env.NODE_ENV !== 'test' ? process.env.PGUSER : process.env.PGUSER_TEST,
+    password: process.env.NODE_ENV !== 'test' ? process.env.PGPASSWORD : process.env.PGPASSWORD_TEST,
+    name: process.env.NODE_ENV !== 'test' ? process.env.PGDATABASE : process.env.PGDATABASE_TEST,
   },
   secret: {
     accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,

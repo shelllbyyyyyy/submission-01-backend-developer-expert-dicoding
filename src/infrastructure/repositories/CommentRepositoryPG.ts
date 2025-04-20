@@ -114,7 +114,7 @@ export class CommentRepositoryPG extends CommentRepository {
                         is_deleted = true
                     WHERE id = $2 AND parent_id = $3
                     RETURNING id;`,
-      values: ['**komentar telah dihapus**', payload.commentId, payload.replyId],
+      values: ['**balasan telah dihapus**', payload.commentId, payload.replyId],
     };
 
     const result = await this.database.query<{ id: string }>(query);
