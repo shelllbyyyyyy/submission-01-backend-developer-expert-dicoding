@@ -114,6 +114,7 @@ describe('ThreadRepositoryPG', () => {
               username: 'test123',
               date: newDate,
               content: 'Ini komen pertama',
+              likeCount: 0,
               replies: [],
             },
             {
@@ -121,6 +122,7 @@ describe('ThreadRepositoryPG', () => {
               username: 'test456',
               date: newDate,
               content: 'Ini komen kedua',
+              likeCount: 0,
               replies: [],
             },
           ],

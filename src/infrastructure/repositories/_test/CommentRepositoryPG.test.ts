@@ -281,4 +281,55 @@ describe('CommentRepositoryPG', () => {
       await expect(commentRepository.verifyComment(payload)).resolves.not.toThrow(AuthorizationError);
     });
   });
+
+  describe('likeComment function', () => {
+    it('should like a comment', async () => {
+      await UsersTableTestHelper.addUser({});
+      await UsersTableTestHelper.addUser({ username: 'user456', id: 'user-456' });
+
+      await ThreadTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComent({ owner: 'user-456' });
+
+      const payload = {
+        commentId: 'comment-123',
+        userId: 'user-123',
+      };
+
+      const fakeIdGenerator = () => '123';
+      const commentRepository = new CommentRepositoryPG(pool, fakeIdGenerator);
+
+      await expect(commentRepository.likeComment(payload)).resolves.not.toThrow(InvariantError);
+    });
+
+    it('should unlike a comment', async () => {
+      await UsersTableTestHelper.addUser({});
+      await UsersTableTestHelper.addUser({ username: 'user456', id: 'user-456' });
+
+      await ThreadTableTestHelper.addThread({});
+      await CommentTableTestHelper.addComent({ owner: 'user-456' });
+      await CommentTableTestHelper.addLikeComment({});
+
+      const payload = {
+        commentId: 'comment-123',
+        userId: 'user-123',
+      };
+
+      const fakeIdGenerator = () => '123';
+      const commentRepository = new CommentRepositoryPG(pool, fakeIdGenerator);
+
+      await expect(commentRepository.likeComment(payload)).resolves.not.toThrow(InvariantError);
+    });
+
+    it('should throw error when like a comment', async () => {
+      const payload = {
+        commentId: 'comment-123',
+        userId: 'user-123',
+      };
+
+      const fakeIdGenerator = () => '123';
+      const commentRepository = new CommentRepositoryPG(pool, fakeIdGenerator);
+
+      await expect(commentRepository.likeComment(payload)).rejects.toThrow(InvariantError);
+    });
+  });
 });

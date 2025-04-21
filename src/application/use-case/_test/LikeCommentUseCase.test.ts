@@ -1,41 +1,32 @@
 import { MESSAGE } from '@common/constant';
+import { AuthorizationError } from '@common/exceptions/AuthorizationError';
 import { InvariantError } from '@common/exceptions/InvariantError';
 import { NotFoundError } from '@common/exceptions/NotFoundError';
-import { IAddedComment, IDeleteComment, IDeleteReplyComment, ILikeComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
+import { IDeleteComment, IDeleteReplyComment, ILikeComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
 import { AddedComment } from '@domain/threads/entities/AddedComment';
+import { AddedReplyComment } from '@domain/threads/entities/AddedReplyComment';
 import { AddedThread } from '@domain/threads/entities/AddedThread';
+import { DetailThread } from '@domain/threads/entities/DetailThread';
 import { NewComment } from '@domain/threads/entities/NewComment';
+import { NewReplyComment } from '@domain/threads/entities/NewReplyComment';
 import { NewThread } from '@domain/threads/entities/NewThread';
 import { CommentRepository } from '@domain/threads/repositories/CommentRepository';
 import { ThreadRepository } from '@domain/threads/repositories/ThreadRepository';
 import { RegisteredUser } from '@domain/users/entities/RegisteredUser';
 import { RegisterUser } from '@domain/users/entities/RegisterUser';
 import { UserRepository } from '@domain/users/repositories/UserRepository';
-import { DeleteCommentUseCase } from '../DeleteCommentUseCase';
-import { AuthorizationError } from '@common/exceptions/AuthorizationError';
-import { DetailThread } from '@domain/threads/entities/DetailThread';
-import { NewReplyComment } from '@domain/threads/entities/NewReplyComment';
-import { AddedReplyComment } from '@domain/threads/entities/AddedReplyComment';
+import { LikeCommentUseCase } from '../LikeCommentUseCase';
 
-describe('DeleteCommentUseCase', () => {
-  it('should orchestrating the delete comment use case action correctly', async () => {
+describe('LikeCommentUseCase', () => {
+  it('should orchestrating the like comment use case action correctly', async () => {
     const payloadNewComment = {
       owner: 'user-123',
       threadId: 'thread-123',
       id: 'comment-123',
     };
-
-    const payloadComment = {
-      content: 'Ini sebuah comment',
-      id: 'comment-123',
-      owner: 'user-123',
-    } as IAddedComment;
-
-    const mockComment = new AddedComment(payloadComment);
-
     class CommentRepositoryImpl extends CommentRepository {
       async addComment(_: NewComment): Promise<AddedComment> {
-        return mockComment;
+        throw new InvariantError('');
       }
 
       async deleteComment(_: IDeleteComment): Promise<void> {
@@ -105,8 +96,7 @@ describe('DeleteCommentUseCase', () => {
 
     const commentRepository = new CommentRepositoryImpl();
     commentRepository.checkAvailabilityComment = jest.fn().mockImplementation(() => Promise.resolve());
-    commentRepository.verifyComment = jest.fn().mockImplementation(() => Promise.resolve());
-    commentRepository.deleteComment = jest.fn().mockImplementation(() => Promise.resolve());
+    commentRepository.likeComment = jest.fn().mockImplementation(() => Promise.resolve());
 
     const threadRepository = new ThreadRepositoryImpl();
     threadRepository.checkAvailabilityThread = jest.fn().mockImplementation(() => Promise.resolve());
@@ -114,12 +104,12 @@ describe('DeleteCommentUseCase', () => {
     const userRepository = new UserRepositoryImpl();
     userRepository.verifyAvailableUserById = jest.fn().mockImplementation(() => Promise.resolve());
 
-    const deleteCommentUseCase = new DeleteCommentUseCase(commentRepository, threadRepository, userRepository);
+    const likeCommentUseCase = new LikeCommentUseCase(commentRepository, threadRepository, userRepository);
 
     await expect(
-      deleteCommentUseCase.execute({
+      likeCommentUseCase.execute({
         commentId: payloadNewComment.id,
-        owner: payloadComment.owner,
+        userId: payloadNewComment.owner,
         threadId: payloadNewComment.threadId,
       }),
     ).resolves.not.toThrow(InvariantError);
@@ -127,14 +117,9 @@ describe('DeleteCommentUseCase', () => {
     expect(commentRepository.checkAvailabilityComment).toHaveBeenCalledWith(payloadNewComment.id);
     expect(threadRepository.checkAvailabilityThread).toHaveBeenCalledWith(payloadNewComment.threadId);
     expect(userRepository.verifyAvailableUserById).toHaveBeenCalledWith(payloadNewComment.owner);
-    expect(commentRepository.verifyComment).toHaveBeenCalledWith({
+    expect(commentRepository.likeComment).toHaveBeenCalledWith({
       commentId: payloadNewComment.id,
-      owner: payloadNewComment.owner,
-    });
-    expect(commentRepository.deleteComment).toHaveBeenCalledWith({
-      commentId: payloadNewComment.id,
-      owner: payloadNewComment.owner,
-      threadId: payloadNewComment.threadId,
+      userId: payloadNewComment.owner,
     });
   });
 });
