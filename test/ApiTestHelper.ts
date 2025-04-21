@@ -111,4 +111,17 @@ export const APITestHelper = {
 
     return { status };
   },
+  async addLikeComment(server: Server<ServerApplicationState>, accessToken: string, threadId: string, commentId: string): Promise<IBaseResponse> {
+    const response = await server.inject({
+      method: 'PUT',
+      url: `/threads/${threadId}/comments/${commentId}/likes`,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    const { status } = JSON.parse(response.payload) as IBaseResponse;
+
+    return { status };
+  },
 };

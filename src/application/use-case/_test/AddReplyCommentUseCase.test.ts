@@ -1,4 +1,4 @@
-import { IAddedReplyComment, IDeleteComment, IDeleteReplyComment, INewReplyComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
+import { IAddedReplyComment, IDeleteComment, IDeleteReplyComment, ILikeComment, INewReplyComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
 import { AddedComment } from '@domain/threads/entities/AddedComment';
 import { NewComment } from '@domain/threads/entities/NewComment';
 import { CommentRepository } from '@domain/threads/repositories/CommentRepository';
@@ -58,6 +58,9 @@ describe('AddReplyCommentUseCase', () => {
       }
       async verifyReplyComment(_: IVerifyReplyComment): Promise<void> {
         throw new AuthorizationError('');
+      }
+      async likeComment(_: ILikeComment): Promise<void> {
+        throw new InvariantError('');
       }
     }
 

@@ -3,6 +3,7 @@ import {
   IAddedReplyComment,
   IDeleteComment,
   IDeleteReplyComment,
+  ILikeComment,
   INewComment,
   INewReplyComment,
   IVerifyComment,
@@ -67,23 +68,33 @@ describe('CommentRepository', () => {
       async addComment(_: NewComment): Promise<AddedComment> {
         throw new InvariantError('');
       }
+
       async deleteComment(_: IDeleteComment): Promise<void> {
         throw new NotFoundError('');
       }
+
       async verifyComment(_: IVerifyComment): Promise<void> {
         throw new AuthorizationError('');
       }
+
       async checkAvailabilityComment(_: string): Promise<void> {
         throw new NotFoundError('');
       }
+
       async addReplyComment(_: NewReplyComment): Promise<AddedReplyComment> {
         throw new InvariantError('');
       }
+
       async deleteReplyComment(_: IDeleteReplyComment): Promise<void> {
         throw new NotFoundError('');
       }
+
       async verifyReplyComment(_: IVerifyReplyComment): Promise<void> {
         throw new AuthorizationError('');
+      }
+
+      async likeComment(_: ILikeComment): Promise<void> {
+        throw new InvariantError('');
       }
     }
 
@@ -91,6 +102,7 @@ describe('CommentRepository', () => {
     commentRepository.addComment = jest.fn().mockImplementation(() => Promise.resolve(comment));
     commentRepository.deleteComment = jest.fn().mockImplementation(() => Promise.resolve());
     commentRepository.verifyComment = jest.fn().mockImplementation(() => Promise.resolve());
+    commentRepository.likeComment = jest.fn().mockImplementation(() => Promise.resolve());
 
     commentRepository.checkAvailabilityComment = jest.fn().mockImplementation(() => Promise.resolve());
 
@@ -118,5 +130,11 @@ describe('CommentRepository', () => {
         commentId: mockDeleteComment.commentId,
       }),
     ).resolves.not.toThrow(AuthorizationError);
+    expect(
+      commentRepository.likeComment({
+        commentId: mockDeleteComment.commentId,
+        userId: mockDeleteComment.owner,
+      }),
+    ).resolves.not.toThrow(InvariantError);
   });
 });

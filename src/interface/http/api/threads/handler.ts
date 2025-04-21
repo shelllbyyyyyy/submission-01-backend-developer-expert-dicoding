@@ -9,6 +9,7 @@ import { IAddedComment, IAddedThread, IDeleteComment, IDeleteReplyComment, INewC
 import { IBaseResponse, IResponse } from '@common/interface/IResponse';
 import { AddReplyCommentUseCase } from '@application/use-case/AddReplyCommentUseCase';
 import { DeleteReplyCommentUseCase } from '@application/use-case/DeleteReplyCommentUseCase';
+import { LikeCommentUseCase } from '@application/use-case/LikeCommentUseCase';
 
 export class ThreadsHandler {
   constructor(private readonly module: Container) {
@@ -18,6 +19,7 @@ export class ThreadsHandler {
     this.getDetailHandler = this.getDetailHandler.bind(this);
     this.postReplyCommentHandler = this.postReplyCommentHandler.bind(this);
     this.deleteReplyCommentHandler = this.deleteReplyCommentHandler.bind(this);
+    this.putLikeCommentHandler = this.putLikeCommentHandler.bind(this);
   }
 
   async postThreadHandler(request: Request<ReqRefDefaults>, h: ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject> {
@@ -121,11 +123,14 @@ export class ThreadsHandler {
           username: detailThread.getUsername,
           date: detailThread.getDate,
           comments: detailThread.getComments.map(payload => {
+            console.log(payload.getLikeCount);
+
             return {
               id: payload.getId,
               content: payload.getContent,
               date: payload.getDate,
               username: payload.getUsername,
+              likeCount: payload.getLikeCount,
               replies: payload.getReplies?.map(value => {
                 return {
                   id: value.getId,
@@ -196,6 +201,30 @@ export class ThreadsHandler {
     } as IDeleteReplyComment;
 
     await deleteReplyCommentUseCase.execute(payload);
+
+    const responsePayload: IBaseResponse = {
+      status: 'success',
+    };
+
+    const response = h.response(responsePayload);
+
+    response.code(200);
+
+    return response;
+  }
+
+  async putLikeCommentHandler(request: Request<ReqRefDefaults>, h: ResponseToolkit<ReqRefDefaults>): Promise<ResponseObject> {
+    const likeCommentUseCase = this.module.getInstance(LikeCommentUseCase.name) as LikeCommentUseCase;
+
+    const { commentId, threadId } = request.params as Omit<IDeleteReplyComment, 'owner'>;
+
+    const payload = {
+      userId: request.auth.credentials.id as string,
+      threadId,
+      commentId,
+    };
+
+    await likeCommentUseCase.execute(payload);
 
     const responsePayload: IBaseResponse = {
       status: 'success',

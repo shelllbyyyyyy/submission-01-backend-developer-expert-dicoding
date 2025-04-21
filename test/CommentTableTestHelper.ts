@@ -11,6 +11,15 @@ export const CommentTableTestHelper = {
     await pool.query(query);
   },
 
+  async addLikeComment({ id = 'like-123', commentId = 'comment-123', userId = 'user-123' }) {
+    const query = {
+      text: 'INSERT INTO public.user_comment_likes VALUES($1, $2, $3)',
+      values: [id, commentId, userId],
+    };
+
+    await pool.query(query);
+  },
+
   async cleanTable() {
     await pool.query('DELETE FROM public.comments WHERE 1=1');
   },

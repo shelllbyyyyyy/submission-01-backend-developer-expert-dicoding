@@ -1,7 +1,7 @@
 import { MESSAGE } from '@common/constant';
 import { InvariantError } from '@common/exceptions/InvariantError';
 import { NotFoundError } from '@common/exceptions/NotFoundError';
-import { IAddedReplyComment, IDeleteComment, IDeleteReplyComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
+import { IAddedReplyComment, IDeleteComment, IDeleteReplyComment, ILikeComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
 import { AddedComment } from '@domain/threads/entities/AddedComment';
 import { AddedThread } from '@domain/threads/entities/AddedThread';
 import { NewComment } from '@domain/threads/entities/NewComment';
@@ -61,6 +61,9 @@ describe('DeleteReplyCommentUseCase', () => {
 
       async verifyReplyComment(_: IVerifyReplyComment): Promise<void> {
         throw new AuthorizationError('');
+      }
+      async likeComment(_: ILikeComment): Promise<void> {
+        throw new InvariantError('');
       }
     }
 

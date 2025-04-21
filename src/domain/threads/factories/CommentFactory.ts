@@ -4,7 +4,7 @@ import { DetailReplyComment } from '../entities/DetailReplyComment';
 
 export class CommentFactory {
   public static toDomain(payload: IComment): DetailComment {
-    const { content, date, id, username, replies } = payload;
+    const { content, date, id, username, replies, likeCount } = payload;
 
     return new DetailComment({
       id,
@@ -12,6 +12,7 @@ export class CommentFactory {
       content,
       date,
       replies,
+      likeCount,
     });
   }
 

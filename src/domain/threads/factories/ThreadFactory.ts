@@ -18,7 +18,7 @@ export class ThreadFactory {
 
   public static Comments(payload: IComment[]): DetailComment[] {
     return payload?.map(p => {
-      const { content, date, id, username, replies } = p;
+      const { content, date, id, username, replies, likeCount } = p;
 
       return new DetailComment({
         id,
@@ -26,6 +26,7 @@ export class ThreadFactory {
         date: new Date(date),
         username,
         replies,
+        likeCount,
       });
     });
   }

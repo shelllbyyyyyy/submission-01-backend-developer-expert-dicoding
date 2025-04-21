@@ -5,6 +5,11 @@ import { createContainer } from 'instances-container';
 import { nanoid } from 'nanoid';
 import { token } from '@hapi/jwt';
 
+import { DeleteCommentUseCase } from '@application/use-case/DeleteCommentUseCase';
+import { GetDetailThreadUseCase } from '@application/use-case/GetDetailThreadUSeCase';
+import { AddReplyCommentUseCase } from '@application/use-case/AddReplyCommentUseCase';
+import { DeleteReplyCommentUseCase } from '@application/use-case/DeleteReplyCommentUseCase';
+import { LikeCommentUseCase } from '@application/use-case/LikeCommentUseCase';
 import { PasswordHash } from '@application/securities/PasswordHash';
 import { AddUserUseCase } from '@application/use-case/AddUserUseCase';
 import { AuthenticationTokenManager } from '@application/securities/AuthenticationTokenManager';
@@ -24,12 +29,7 @@ import { ThreadRepositoryPG } from './repositories/ThreadRepositoryPG';
 import { UserRepositoryPG } from './repositories/UserRepositoryPG';
 import { BcryptEncryptionHelper } from './securities/BcryptEncryptionHelper';
 import { JwtTokenManager } from './securities/JwtTokenManager';
-
 import { CommentRepositoryPG } from './repositories/CommentRepositoryPG';
-import { DeleteCommentUseCase } from '@application/use-case/DeleteCommentUseCase';
-import { GetDetailThreadUseCase } from '@application/use-case/GetDetailThreadUSeCase';
-import { AddReplyCommentUseCase } from '@application/use-case/AddReplyCommentUseCase';
-import { DeleteReplyCommentUseCase } from '@application/use-case/DeleteReplyCommentUseCase';
 
 const MainModule = createContainer();
 
@@ -162,6 +162,14 @@ MainModule.register([
   {
     key: DeleteReplyCommentUseCase.name,
     Class: DeleteReplyCommentUseCase,
+    parameter: {
+      injectType: 'parameter',
+      dependencies: [{ internal: CommentRepository.name }, { internal: ThreadRepository.name }, { internal: UserRepository.name }],
+    },
+  },
+  {
+    key: LikeCommentUseCase.name,
+    Class: LikeCommentUseCase,
     parameter: {
       injectType: 'parameter',
       dependencies: [{ internal: CommentRepository.name }, { internal: ThreadRepository.name }, { internal: UserRepository.name }],

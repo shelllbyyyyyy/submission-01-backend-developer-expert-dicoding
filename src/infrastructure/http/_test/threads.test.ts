@@ -557,4 +557,105 @@ describe('Request to /threads', () => {
       expect(response.status).toEqual('success');
     });
   });
+
+  describe('PUT /threads/{threadId}/comments/{commentId}/likes', () => {
+    it('it should response 401 when user like a comment', async () => {
+      server = await createServer(MainModule);
+
+      const { payload, statusCode } = await server.inject({
+        method: 'PUT',
+        url: '/threads/thread-123/comments/comment-123/likes',
+      });
+
+      const response = JSON.parse(payload);
+
+      expect(statusCode).toEqual(401);
+      expect(response.status).toEqual('fail');
+      expect(response.message).toBeDefined();
+    });
+
+    it('it should response 404 comment not found when user like a comment', async () => {
+      const { accessToken } = await APITestHelper.login(server, 'test123');
+      const { id: threadId } = await APITestHelper.addThread(server, accessToken);
+      server = await createServer(MainModule);
+
+      const { payload, statusCode } = await server.inject({
+        method: 'PUT',
+        url: `/threads/${threadId}/comments/comment-123/likes`,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const response = JSON.parse(payload);
+
+      expect(statusCode).toEqual(404);
+      expect(response.status).toEqual('fail');
+      expect(response.message).toEqual(MESSAGE.COMMENT_NOT_FOUND);
+    });
+
+    it('it should response 404 thread not found when user like a comment', async () => {
+      const { accessToken } = await APITestHelper.login(server, 'test123');
+      server = await createServer(MainModule);
+
+      const { payload, statusCode } = await server.inject({
+        method: 'PUT',
+        url: `/threads/thread-123/comments/comment-123/likes`,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      const response = JSON.parse(payload);
+
+      expect(statusCode).toEqual(404);
+      expect(response.status).toEqual('fail');
+      expect(response.message).toEqual(MESSAGE.THREAD_NOT_FOUND);
+    });
+
+    it('it should response 200 user like a comment', async () => {
+      const { accessToken: accessTokenA } = await APITestHelper.login(server, 'test123');
+      const { accessToken: accessTokenB } = await APITestHelper.login(server, 'test456');
+      const { id: threadId } = await APITestHelper.addThread(server, accessTokenA);
+      const { id: commentId } = await APITestHelper.addComment(server, accessTokenB, threadId);
+
+      server = await createServer(MainModule);
+
+      const { payload, statusCode } = await server.inject({
+        method: 'PUT',
+        url: `/threads/${threadId}/comments/${commentId}/likes`,
+        headers: {
+          authorization: `Bearer ${accessTokenA}`,
+        },
+      });
+
+      const response = JSON.parse(payload);
+
+      expect(statusCode).toEqual(200);
+      expect(response.status).toEqual('success');
+    });
+
+    it('it should response 200 user unlike a comment', async () => {
+      const { accessToken: accessTokenA } = await APITestHelper.login(server, 'test123');
+      const { accessToken: accessTokenB } = await APITestHelper.login(server, 'test456');
+      const { id: threadId } = await APITestHelper.addThread(server, accessTokenA);
+      const { id: commentId } = await APITestHelper.addComment(server, accessTokenB, threadId);
+      await APITestHelper.addLikeComment(server, accessTokenB, threadId, commentId);
+
+      server = await createServer(MainModule);
+
+      const { payload, statusCode } = await server.inject({
+        method: 'PUT',
+        url: `/threads/${threadId}/comments/${commentId}/likes`,
+        headers: {
+          authorization: `Bearer ${accessTokenA}`,
+        },
+      });
+
+      const response = JSON.parse(payload);
+
+      expect(statusCode).toEqual(200);
+      expect(response.status).toEqual('success');
+    });
+  });
 });

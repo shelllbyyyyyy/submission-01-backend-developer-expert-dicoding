@@ -49,4 +49,12 @@ export const routes = (handler: ThreadsHandler) =>
         auth: 'ForumAPIStrategy',
       },
     },
+    {
+      method: 'PUT',
+      path: '/threads/{threadId}/comments/{commentId}/likes',
+      handler: handler.putLikeCommentHandler,
+      options: {
+        auth: 'ForumAPIStrategy',
+      },
+    },
   ] as ServerRoute<ReqRefDefaults>[];
