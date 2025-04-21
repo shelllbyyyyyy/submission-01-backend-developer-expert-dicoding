@@ -27,6 +27,7 @@ export interface IAddedComment extends Omit<INewComment, 'threadId'> {
 
 export interface IComment extends Omit<INewComment, 'owner' | 'threadId'>, Pick<IThread, 'id' | 'date' | 'username'> {
   replies?: IReplyComment[];
+  likeCount?: number;
 }
 
 export interface IDeleteComment extends Omit<INewComment, 'content'> {
@@ -45,4 +46,9 @@ export interface IDeleteReplyComment extends IDeleteComment {
 }
 export interface IVerifyReplyComment extends IVerifyComment {
   replyId: string;
+}
+
+export interface ILikeComment {
+  userId: string;
+  commentId: string;
 }

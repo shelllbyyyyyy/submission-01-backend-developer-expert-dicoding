@@ -1,4 +1,4 @@
-import { IDeleteComment, IDeleteReplyComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
+import { IDeleteComment, IDeleteReplyComment, ILikeComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
 import { AddedComment } from '../entities/AddedComment';
 import { NewComment } from '../entities/NewComment';
 import { NewReplyComment } from '../entities/NewReplyComment';
@@ -12,4 +12,5 @@ export abstract class CommentRepository {
   abstract addReplyComment(payload: NewReplyComment): Promise<AddedReplyComment>;
   abstract deleteReplyComment(payload: IDeleteReplyComment): Promise<void>;
   abstract verifyReplyComment(payload: IVerifyReplyComment): Promise<void>;
+  abstract likeComment(payload: ILikeComment): Promise<void>;
 }

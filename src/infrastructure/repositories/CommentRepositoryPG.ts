@@ -4,7 +4,7 @@ import { Pool } from 'pg';
 import { MESSAGE } from '@common/constant';
 import { AuthorizationError } from '@common/exceptions/AuthorizationError';
 import { InvariantError } from '@common/exceptions/InvariantError';
-import { IAddedComment, IAddedReplyComment, IDeleteComment, IDeleteReplyComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
+import { IAddedComment, IAddedReplyComment, IDeleteComment, IDeleteReplyComment, ILikeComment, IVerifyComment, IVerifyReplyComment } from '@common/interface/IThread';
 import { AddedComment } from '@domain/threads/entities/AddedComment';
 import { NewComment } from '@domain/threads/entities/NewComment';
 import { CommentRepository } from '@domain/threads/repositories/CommentRepository';
@@ -134,6 +134,62 @@ export class CommentRepositoryPG extends CommentRepository {
     const result = await this.database.query<{ owner: string }>(query);
     if (result.rows[0].owner !== payload.owner) {
       throw new AuthorizationError(MESSAGE.DELETE_COMMENT_RESTRICTED);
+    }
+  }
+
+  async likeComment(payload: ILikeComment): Promise<void> {
+    const { commentId, userId } = payload;
+
+    const client = await this.database.connect();
+    try {
+      await client.query('BEGIN');
+
+      const query1 = {
+        text: `
+              SELECT id FROM public.user_comment_likes
+              WHERE user_id = $1 AND comment_id = $2
+              `,
+        values: [userId, commentId],
+      };
+
+      const result = await client.query(query1);
+
+      if (!result.rowCount) {
+        const id = `likes-${this.idGenerator()}`;
+
+        const query2 = {
+          text: `
+                INSERT INTO public.user_comment_likes VALUES($1, $2, $3)
+                RETURNING id;
+                `,
+          values: [id, commentId, userId],
+        };
+
+        await client.query(query2);
+
+        await client.query('COMMIT');
+
+        return;
+      }
+      const query3 = {
+        text: `
+                DELETE FROM public.user_comment_likes
+                WHERE user_id = $1 AND comment_id = $2;
+                `,
+        values: [userId, commentId],
+      };
+
+      await client.query(query3);
+
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+
+      if (error instanceof Error) {
+        throw new InvariantError(error.message);
+      }
+    } finally {
+      client.release();
     }
   }
 }

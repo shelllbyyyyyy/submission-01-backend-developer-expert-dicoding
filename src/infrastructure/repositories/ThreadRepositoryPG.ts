@@ -65,7 +65,8 @@ export class ThreadRepositoryPG extends ThreadRepository {
                         'username', u.username, 
                         'date', c.date, 
                         'content', c.content,
-                        'replies', COALESCE(replies.replies, '[]')
+                        'replies', COALESCE(replies.replies, '[]'),
+                        'likeCount', COALESCE(likeCount.likes, 0)
                       )
                       ORDER BY c.date ASC
                     ) AS comments
@@ -88,6 +89,11 @@ export class ThreadRepositoryPG extends ThreadRepository {
                     WHERE r.parent_id IS NOT NULL
                     GROUP BY r.parent_id
                   ) AS replies ON c.id = replies.parent_id
+                  LEFT JOIN (
+                    SELECT comment_id, COUNT(*) AS likes
+                    FROM public.user_comment_likes
+                    GROUP BY comment_id
+                  ) AS likeCount ON c.id = likeCount.comment_id
                   WHERE c.parent_id IS NULL
                   GROUP BY c.thread_id
                 )
